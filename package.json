@@ -1,0 +1,7 @@
+{
+  "name": "votacion-casa-ano-nuevo",
+  "private": true,
+  "dependencies": {
+    "@clerk/backend": "3.23.2"
+  }
+}

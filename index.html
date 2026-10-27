@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Casa de Año Nuevo</title><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: encabezado con conteo de votos, mapa por zona con pines numerados, galería de tarjetas con fotos grandes */
+:root{
+  --bg:#eef2ef; --surface:#ffffff; --fg:#1b2420; --muted:#5d6a63; --line:#d9e1dc;
+  --accent:#2f6b57; --accent-ink:#ffffff; --accent-soft:#dcebe4;
+  --lake:#2b5f86; --sun:#c9772b; --sun-ink:#ffffff;
+  --ph-a:#c9dbe6; --ph-b:#d7e5d6; --shadow:0 1px 2px rgba(20,40,30,.06),0 10px 28px rgba(20,40,30,.10);
+  --danger:#a33a2a;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101614; --surface:#18201c; --fg:#e6ece8; --muted:#9aa8a0; --line:#28322d;
+  --accent:#7cc4a7; --accent-ink:#0f1a15; --accent-soft:#1d362c;
+  --lake:#8dbde3; --sun:#f0a866; --sun-ink:#24170a;
+  --ph-a:#1e3140; --ph-b:#20342a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.4);
+  --danger:#f08b78; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#101614; --surface:#18201c; --fg:#e6ece8; --muted:#9aa8a0; --line:#28322d;
+  --accent:#7cc4a7; --accent-ink:#0f1a15; --accent-soft:#1d362c;
+  --lake:#8dbde3; --sun:#f0a866; --sun-ink:#24170a;
+  --ph-a:#1e3140; --ph-b:#20342a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.4);
+  --danger:#f08b78; color-scheme:dark }
+[hidden]{display:none!important}
+img{max-width:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:32px}
+header{display:grid;gap:12px}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,56px);line-height:1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0;text-wrap:balance}
+.trip{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-size:13px;font-weight:600;padding:4px 12px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.lede{color:var(--muted);margin:0;max-width:64ch}
+.tally{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;max-width:560px}
+.tally-top{display:flex;justify-content:space-between;gap:12px;font-weight:600;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.tally-top span:last-child{color:var(--muted);font-weight:500}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;width:0}
+.who{display:flex;flex-wrap:wrap;gap:4px}
+.who img{width:24px;height:24px;border-radius:50%}
+.authbox{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0;font-size:14px}
+.gbtn{font:inherit;font-weight:700;font-size:15px;background:var(--fg);color:var(--bg);border:0;border-radius:99px;padding:10px 20px;cursor:pointer}
+.gbtn:disabled{opacity:.5}
+.votemsg{margin:0;font-size:14px;font-weight:600;color:var(--sun)}
+.av{width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);margin-left:-8px;object-fit:cover}
+.av:first-child{margin-left:0}
+.who .av{margin-left:0;border:0}
+.chip{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 6px;border-radius:13px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:12px;border:2px solid var(--surface);margin-left:-6px;box-sizing:border-box}
+.chip:first-child{margin-left:0}
+
+/* mapa */
+.mapsec{display:grid;gap:12px}
+.maphead{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.fbtn{font:inherit;font-size:14px;font-weight:600;padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.fbtn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;align-items:start;max-width:920px}
+.mapfig{margin:0;display:grid;gap:6px;min-width:0}
+.mapfig figcaption{font-weight:700;font-size:14px}
+.mapbox{position:relative;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:var(--surface);max-width:100%}
+.mapbox img.base{display:block;width:100%;height:auto}
+.pin{position:absolute;transform:translate(-50%,-100%);font:inherit;font-weight:800;font-size:12px;min-width:26px;height:26px;padding:0 5px;border-radius:13px 13px 13px 2px;rotate:-45deg;background:var(--accent);color:var(--accent-ink);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);cursor:pointer;display:grid;place-items:center}
+.pin span{rotate:45deg;font-variant-numeric:tabular-nums}
+.pin.lead{background:var(--sun);color:var(--sun-ink)}
+.pin.mine{outline:3px solid var(--lake)}
+.pin.approx{background:#fff;color:#1b2420;border:2px dashed #1b2420}
+.mapnote{font-size:12px;color:var(--muted);margin:0}
+
+/* tarjetas */
+.listhead{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between}
+.status{font-size:14px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:10px}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr));gap:22px}
+.card{background:var(--surface);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;border:2px solid transparent;scroll-margin-top:16px}
+.card.mine{border-color:var(--accent)}
+.card.flash{animation:flash 1.4s ease}
+@keyframes flash{0%,60%{box-shadow:0 0 0 4px var(--sun)}100%{box-shadow:var(--shadow)}}
+.photo{position:relative;aspect-ratio:16/10;max-width:100%;background:linear-gradient(135deg,var(--ph-a),var(--ph-b));overflow:hidden}
+.strip{display:flex;width:100%;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:start;display:block}
+.ph-empty{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;text-align:center;padding:16px}
+.ph-place{font-family:var(--display);font-weight:800;font-size:clamp(22px,4vw,30px);opacity:.55;line-height:1}
+.ph-btn{font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:99px;border:0;background:var(--surface);color:var(--fg);cursor:pointer;box-shadow:var(--shadow)}
+.ph-hint{font-size:12px;color:var(--muted)}
+.nav{position:absolute;top:50%;translate:0 -50%;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#1b2420;font-size:18px;font-weight:700;cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.nav.prev{left:10px}.nav.next{right:10px}
+.dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;pointer-events:none}
+.dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55)}
+.dots i.on{background:#fff}
+.badges{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:start;gap:8px;pointer-events:none}
+.num{font-family:var(--display);font-weight:800;font-size:15px;min-width:30px;height:30px;padding:0 8px;border-radius:15px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;border:2px solid #fff;font-variant-numeric:tabular-nums}
+.num.lead{background:var(--sun);color:var(--sun-ink)}
+.badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.94);color:#1b2420;letter-spacing:.02em}
+.badge.lead{background:var(--sun);color:var(--sun-ink)}
+.chg{position:absolute;bottom:10px;right:10px;font:inherit;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;border:0;background:rgba(0,0,0,.55);color:#fff;cursor:pointer}
+.info{padding:16px 18px 14px;display:grid;gap:8px;flex:1;align-content:start}
+.src{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.src .s{color:var(--lake)} .src .s.ml{color:var(--sun)} .src .s.otro{color:var(--accent)}
+.title{font-family:var(--display);font-weight:600;font-size:21px;line-height:1.2;margin:0;overflow-wrap:anywhere;text-wrap:balance}
+.priceRow{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-variant-numeric:tabular-nums}
+.ptotal{font-family:var(--display);font-weight:800;font-size:22px;color:var(--fg)}
+.pbefore{color:var(--muted);text-decoration:line-through;font-size:14px}
+.pnight{color:var(--muted);font-size:14px}
+.pnone{color:var(--muted);font-size:14px;font-style:italic}
+.specs{color:var(--fg);font-size:14px;margin:0;font-variant-numeric:tabular-nums}
+.note{color:var(--muted);font-size:14px;margin:0;overflow-wrap:anywhere}
+.foot{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--line)}
+.links{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px}
+.links a{color:var(--lake);font-weight:600;text-decoration:none}
+.links a:hover{text-decoration:underline}
+.linkbtn{background:none;border:0;padding:0;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline}
+.linkbtn.danger{color:var(--danger)}
+.vote{display:flex;align-items:center;gap:10px}
+.voters{display:flex}
+.voters img{width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);margin-left:-8px}
+.voters img:first-child{margin-left:0}
+.count{font-weight:700;font-variant-numeric:tabular-nums}
+.vbtn{font:inherit;font-weight:700;font-size:14px;border:1.5px solid var(--accent);color:var(--accent);background:transparent;border-radius:99px;padding:7px 16px;cursor:pointer}
+.vbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.vbtn:disabled{opacity:.5;cursor:default}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--lake);outline-offset:2px}
+section.add{display:grid;gap:12px;max-width:640px}
+form{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:grid;gap:4px;font-size:13px;color:var(--muted);font-weight:500;min-width:0}
+input,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;box-sizing:border-box}
+textarea{resize:vertical;min-height:60px}
+.submit{justify-self:start;font:inherit;font-weight:700;background:var(--accent);color:var(--accent-ink);border:0;border-radius:99px;padding:9px 18px;cursor:pointer}
+.msg{font-size:13px;color:var(--muted);min-height:1em;margin:0}
+.msg.err{color:var(--danger)}
+@media (max-width:520px){.row{grid-template-columns:1fr}.title{font-size:19px}.pin{min-width:26px;height:26px;font-size:12px}.nav{display:none}}
+@media (prefers-reduced-motion:no-preference){.vbtn,.fbtn{transition:background .15s,color .15s}.bar i{transition:width .4s ease}.strip{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){.card.flash{animation:none}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Año Nuevo en la Patagonia</div>
+    <h1>¿Dónde nos quedamos?</h1>
+    <div class="trip"><span class="pill">27 dic → 3 ene</span><span class="pill">7 noches</span><span class="pill">7 personas</span></div>
+    <p class="lede">Cada uno tiene hasta 3 votos: marcá las casas que más te gusten (no hace falta usar los 3). Podés sacar un voto y ponerlo en otra cuando quieras. Deslizá las fotos de cada casa para ver más.</p>
+    <div class="authbox" id="loginBox" hidden><button class="gbtn" type="button" id="loginBtn">Entrar con Google para votar</button><span class="mapnote" id="loginErr" hidden>El inicio de sesión no está disponible todavía.</span></div>
+    <p class="authbox" id="whoBox" hidden>Votás como <b id="whoName"></b> · <button class="linkbtn" type="button" id="logoutBtn">Salir</button></p>
+    <p class="votemsg" id="voteMsg" role="status" hidden></p>
+    <div class="tally" id="tally" hidden>
+      <div class="tally-top"><span id="tallyText">0 de 7 votaron</span><span id="tallyLead"></span></div>
+      <div class="bar" aria-hidden="true"><i id="tallyBar"></i></div>
+      <div class="who" id="tallyWho"></div>
+    </div>
+  </header>
+
+  <section class="mapsec" aria-labelledby="mapTitle">
+    <h2 id="mapTitle">Dónde queda cada una</h2>
+    <div class="maps">
+      <figure class="mapfig"><figcaption>San Martín de los Andes</figcaption><div class="mapbox" id="mapbox-sma"><img class="base" src="mapa-sma-v2.jpg" alt="Mapa de San Martín de los Andes con las casas marcadas" width="973" height="755"></div></figure>
+      <figure class="mapfig"><figcaption>Bariloche</figcaption><div class="mapbox" id="mapbox-brc"><img class="base" src="mapa-brc-v2.jpg" alt="Mapa de Bariloche con las casas marcadas" width="973" height="755"></div></figure>
+    </div>
+    <p class="mapnote">Tocá un número para ir a esa casa. Los pines punteados tienen ubicación aproximada. Mapa © colaboradores de OpenStreetMap.</p>
+  </section>
+
+  <section style="display:grid;gap:16px" aria-labelledby="listTitle">
+    <div class="listhead">
+      <h2 id="listTitle">Las opciones</h2>
+      <div class="seg" role="group" aria-label="Ordenar y filtrar">
+        <button class="fbtn" type="button" data-f="todas" aria-pressed="true">Todas</button>
+        <button class="fbtn" type="button" data-f="sma" aria-pressed="false">San Martín</button>
+        <button class="fbtn" type="button" data-f="brc" aria-pressed="false">Bariloche</button>
+        <button class="fbtn" type="button" id="sortBtn" aria-pressed="false">Más baratas primero</button>
+      </div>
+    </div>
+    <div id="status" class="status">Cargando opciones…</div>
+    <div id="list" aria-live="polite"></div>
+    <p class="mapnote">Precios totales de Airbnb para el 27/12 al 3/1 con 7 huéspedes, consultados el 27 de octubre. Pueden cambiar. Los precios con ≈ son estimados a partir de la tarifa por noche que publica el dueño y hay que confirmarlos.</p>
+  </section>
+
+  <section class="add" id="addSection">
+    <h2>Sumar una opción</h2>
+    <form id="addForm" novalidate>
+      <label for="fUrl">Link (Airbnb, Mercado Libre u otro)
+        <input id="fUrl" type="url" placeholder="https://www.airbnb.com.ar/rooms/…" required>
+      </label>
+      <label for="fTitle">Nombre
+        <input id="fTitle" type="text" maxlength="120" placeholder="Casa con vista al lago Lácar">
+      </label>
+      <div class="row">
+        <label for="fPrice">Precio total
+          <input id="fPrice" type="text" maxlength="40" placeholder="USD 2.100">
+        </label>
+        <label for="fSpecs">Zona y detalles
+          <input id="fSpecs" type="text" maxlength="100" placeholder="San Martín de los Andes · 4 dorm · 3 baños">
+        </label>
+      </div>
+      <label for="fNote">Comentario
+        <textarea id="fNote" maxlength="300" placeholder="Qué tiene de bueno o qué hay que chequear"></textarea>
+      </label>
+      <button class="submit" type="submit">Agregar opción</button>
+      <p class="msg" id="formMsg"></p>
+    </form>
+  </section>
+  <input type="file" id="filePick" accept="image/*" hidden>
+</div>
+
+<script>
+(async () => {
+  const GROUP = 7, NIGHTS = 7;
+  const MAPS = {
+    sma: { src: "mapa-sma-v2.jpg", w: 973, h: 755, x0: 2471.39, y0: 5093.8, x1: 2475.19, y1: 5096.75, alt: "Mapa de San Martín de los Andes con las casas marcadas" },
+    brc: { src: "mapa-brc-v2.jpg", w: 973, h: 755, x0: 2469.78, y0: 5123.555, x1: 2473.58, y1: 5126.505, alt: "Mapa de Bariloche con las casas marcadas" }
+  };
+  const $ = id => document.getElementById(id);
+  const statusEl = $("status"), listEl = $("list"), form = $("addForm"), formMsg = $("formMsg"), filePick = $("filePick");
+  let options = [], votes = {}, me = null, canEdit = false, canWrite = null, user = null, db = null, assets = null;
+  let busy = false, filter = "todas", byPrice = false, mapZone = "sma", uploadTarget = null;
+  const uploading = new Set(), slide = new Map();
+  const fmt = n => "USD " + Math.round(n).toLocaleString("es-AR");
+
+  const sourceOf = url => {
+    try {
+      const h = new URL(url).hostname;
+      if (h.includes("airbnb")) return { key: "airbnb", label: "Airbnb" };
+      if (h.includes("mercadolibre")) return { key: "ml", label: "Mercado Libre" };
+      return { key: "otro", label: h.replace(/^www\./, "").split(".")[0] };
+    } catch { return { key: "otro", label: "Link" }; }
+  };
+  const safeUrl = u => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : null; } catch { return null; } };
+  const zoneOf = o => {
+    if (o.zone === "sma" || o.zone === "brc") return o.zone;
+    const s = (o.specs || "") + " " + (o.title || "");
+    if (/bariloche/i.test(s)) return "brc";
+    if (/san mart[ií]n/i.test(s)) return "sma";
+    return "otra";
+  };
+  const zoneName = z => z === "sma" ? "San Martín" : z === "brc" ? "Bariloche" : "Patagonia";
+  const pickOf = d => d && (typeof d.pick === "string" ? d.pick : Array.isArray(d.picks) && d.picks.length ? d.picks[0] : null);
+  const photosOf = o => {
+    const a = Array.isArray(o.photos) ? o.photos.filter(p => typeof p === "string" && /^fotos\/[\w.-]+$/.test(p)) : [];
+    if (o.photoUrl) a.unshift(o.photoUrl); else if (o.photoId) a.unshift("/_blob/" + o.photoId);
+    return a;
+  };
+  const toTile = (lat, lng) => {
+    const n = 8192, x = (lng + 180) / 360 * n;
+    const r = lat * Math.PI / 180;
+    const y = (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n;
+    return [x, y];
+  };
+
+  document.querySelectorAll("[data-f]").forEach(b => b.onclick = () => {
+    filter = b.dataset.f;
+    document.querySelectorAll("[data-f]").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    render();
+  });
+  $("sortBtn").onclick = () => { byPrice = !byPrice; $("sortBtn").setAttribute("aria-pressed", String(byPrice)); render(); };
+
+  options = [{"createdAt": 1793141004000, "lat": -41.14637, "lng": -71.3177, "note": "A pocas cuadras del centro. Anuncio nuevo sin reseñas (el anfitrión tiene 4,88 en otras casas).", "photos": ["fotos/bariloche-5-dorm-1.jpg", "fotos/bariloche-5-dorm-2.jpg", "fotos/bariloche-5-dorm-3.jpg"], "price": "", "priceTotal": 2220, "specs": "Bariloche · 5 dorm · 6 camas · 2 baños · hasta 8", "title": "Casa de 5 dormitorios con vista al lago", "url": "https://www.airbnb.com.ar/rooms/1756906531332968719?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "brc", "id": "bariloche-5-dorm"}, {"createdAt": 1793141001000, "lat": -41.13028, "lng": -71.34508, "note": "Vista al Nahuel Huapi desde todos los ambientes. Sin reseñas todavía.", "photos": ["fotos/bariloche-vista-lago-1.jpg", "fotos/bariloche-vista-lago-2.jpg"], "price": "", "priceTotal": 2100, "specs": "Bariloche · 5 dorm · 8 camas · 3,5 baños · hasta 10", "title": "Casa en Bariloche con vista al lago", "url": "https://www.airbnb.com.ar/rooms/792843516272823339?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "brc", "id": "bariloche-vista-lago"}, {"createdAt": 1793141002000, "lat": -40.19683, "lng": -71.29901, "note": "Chalet de tres pisos con hogar a leña y losa radiante, al lado de las pistas de Chapelco. 5,0 con 1 reseña.", "photos": ["fotos/cabana-del-puma-1.jpg", "fotos/cabana-del-puma-2.jpg", "fotos/cabana-del-puma-3.jpg"], "price": "", "priceBefore": 2261, "priceTotal": 2035, "specs": "San Martín de los Andes (Las Pendientes) · 4 dorm · 2,5 baños · hasta 10", "title": "Nepenpiren · Cabaña Del Puma", "url": "https://www.airbnb.com.ar/rooms/16199882?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "sma", "id": "cabana-del-puma"}, {"createdAt": 1793141010000, "lat": -41.13839, "lng": -71.34562, "note": "A 3 km del centro, en un bosque con huerta y senderos. Hogar a leña y parrilla de ladrillo. 4,63 con 8 reseñas.", "photos": ["fotos/casa-de-bosque-1.jpg", "fotos/casa-de-bosque-2.jpg"], "price": "", "priceTotal": 2545, "specs": "Bariloche · 5 dorm · 8 camas · 3 baños · hasta 10", "title": "Casa de bosque cerca del centro", "url": "https://www.airbnb.com.ar/rooms/999926331448145923?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "brc", "id": "casa-de-bosque"}, {"createdAt": 1793141006000, "lat": -40.1466, "lng": -71.2683, "note": "Terreno de una hectárea con arroyo y granja de llamas. Jacuzzi y hogar a leña. 5,0 con 1 reseña.", "photos": ["fotos/casa-sonada-montana-1.jpg", "fotos/casa-sonada-montana-2.jpg", "fotos/casa-sonada-montana-3.jpg"], "price": "", "priceTotal": 2470, "specs": "San Martín de los Andes (zona Meliquina) · 4 dorm · 5 camas · 4 baños · hasta 8", "title": "Casa soñada en la montaña", "url": "https://www.airbnb.com.ar/rooms/813081307187601373?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "sma", "id": "casa-sonada-montana"}, {"createdAt": 1793141009000, "lat": -41.16503, "lng": -71.44477, "note": "Hogar, fogonero y parrilla. Sin reseñas propias (el anfitrión tiene 4,55 en otras casas).", "photos": ["fotos/catedral-primera-linea-1.jpg", "fotos/catedral-primera-linea-2.jpg", "fotos/catedral-primera-linea-3.jpg"], "price": "", "priceBefore": 2660, "priceTotal": 2148, "specs": "Bariloche (Catedral) · 4 dorm · 7 camas · 3 baños · hasta 9", "title": "Catedral Primera Línea", "url": "https://www.airbnb.com.ar/rooms/1712601782754440670?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "brc", "id": "catedral-primera-linea"}, {"createdAt": 1793141003000, "lat": -41.1305, "lng": -71.3542, "note": "Quincho con parrilla y horno, brasero, jacuzzi y aire acondicionado. 5,0 con 2 reseñas.", "photos": ["fotos/espectacular-casa-bariloche-1.jpg", "fotos/espectacular-casa-bariloche-2.jpg"], "price": "", "priceBefore": 2190, "priceTotal": 1973, "specs": "Bariloche · 4 dorm · 8 camas · 2 baños · hasta 8", "title": "Espectacular Casa", "url": "https://www.airbnb.com.ar/rooms/1206853082514910976?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "brc", "id": "espectacular-casa-bariloche"}, {"createdAt": 1793141007000, "lat": -40.1418, "lng": -71.29698, "note": "A 5 km del centro por camino de ripio. Hogar a leña y parrilla. 5,0 con 3 reseñas.", "photos": ["fotos/la-grande-cuca-1.jpg", "fotos/la-grande-cuca-2.jpg", "fotos/la-grande-cuca-3.jpg"], "price": "", "priceBefore": 1610, "priceTotal": 1449, "specs": "San Martín de los Andes · 4 dorm · 5 camas · 2 baños · hasta 8", "title": "A la Grande le puse Cuca", "url": "https://www.airbnb.com.ar/rooms/1015753715873388488?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "sma", "id": "la-grande-cuca"}, {"createdAt": 1793141008000, "lat": -40.1951, "lng": -71.29783, "note": "Cabaña de 250 m² con vista al Lanín, hogar y parrilla. 4,73 con 37 reseñas, la más reseñada de la lista.", "photos": ["fotos/las-pendientes-chapelco-1.jpg", "fotos/las-pendientes-chapelco-2.jpg", "fotos/las-pendientes-chapelco-3.jpg"], "price": "", "priceTotal": 2108, "specs": "San Martín de los Andes (Las Pendientes) · 4 dorm · 9 camas · 2,5 baños · hasta 8", "title": "Las Pendientes Chapelco", "url": "https://www.airbnb.com.ar/rooms/24157217?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "sma", "id": "las-pendientes-chapelco"}, {"createdAt": 1793141005000, "lat": -40.1993, "lng": -71.3197, "note": "Hogar a leña, grupo electrógeno, acepta mascotas. 4,83 con 6 reseñas.", "photos": ["fotos/las-pendientes-ski-village-1.jpg", "fotos/las-pendientes-ski-village-2.jpg", "fotos/las-pendientes-ski-village-3.jpg"], "price": "", "priceTotal": 2365, "specs": "San Martín de los Andes (Las Pendientes) · 4 dorm · 8 camas · 2,5 baños · hasta 8", "title": "Casa en Las Pendientes Ski Village", "url": "https://www.airbnb.com.ar/rooms/41620552?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "sma", "id": "las-pendientes-ski-village"}, {"createdAt": 1793141013000, "note": "Casa moderna con vista a las montañas, hogar y parrilla, a pocos minutos del centro. Precio de temporada alta verano 2027, reserva directa con Patagonia Alquileres.", "photos": ["fotos/los-riscos-1.jpg", "fotos/los-riscos-2.jpg"], "price": "", "priceTotal": 2450, "specs": "San Martín de los Andes (barrio Los Riscos) · 4 dorm · 4 baños · hasta 8", "title": "Casa Los Riscos", "url": "https://www.patagoniaalquileres.com.ar/san-martin-de-los-andes-casas/casa-los-riscos", "zone": "sma", "id": "los-riscos"}, {"approx": true, "createdAt": 1793141011000, "lat": -41.13114, "lng": -71.37996, "note": "Jardín grande con vista al lago, calefacción central y estacionamiento. Publica USD 280 y pide consultar la tarifa según la fecha. Ojo: el aviso es de hace 10 años, las fotos son de 2014 y Mercado Libre avisa que la inmobiliaria no siempre responde.", "photos": ["fotos/ml-bariloche-pioneros-1.jpg", "fotos/ml-bariloche-pioneros-2.jpg", "fotos/ml-bariloche-pioneros-3.jpg"], "price": "", "priceEstimate": true, "priceTotal": 1960, "specs": "Bariloche (Victoria Ocampo 200, Pioneros km 5) · 5 dorm · 4 baños · hasta 10", "title": "Casa en Pioneros km 5", "url": "https://casa.mercadolibre.com.ar/MLA-2610912674-alquiler-temporario-de-casa-en-bariloche-km-5-pioneros-10-personas-_JM", "zone": "brc", "id": "ml-bariloche-pioneros"}, {"approx": true, "createdAt": 1793141012000, "lat": -40.10843, "lng": -71.30357, "note": "Pileta climatizada todo el año, hogar a leña, playroom con ping pong y parque de 2.000 m². A 6 km del centro y 20 km de Chapelco. El dueño publica USD 300 por noche para hasta 8 personas, con mínimo de 4 noches. Las fotos son de invierno.", "photos": ["fotos/ml-penon-del-lolog-1.jpg", "fotos/ml-penon-del-lolog-2.jpg"], "price": "", "priceEstimate": true, "priceTotal": 2100, "specs": "San Martín de los Andes (barrio privado Peñón del Lolog) · 4 dorm · 3 baños · hasta 12", "title": "La Deseada de Fausto, en Peñón del Lolog", "url": "https://casa.mercadolibre.com.ar/MLA-2177073321-dueno-alquila-magnifica-casa-residencial-con-piscina-climatizada-san-martin-de-los-andes-exclusivo-barrio-privado-penon-del-lolog-la-mejor-casa-de-montana-de-san-martin-de-los-andes-_JM", "zone": "sma", "id": "ml-penon-del-lolog"}, {"createdAt": 1793141000000, "lat": -40.11729, "lng": -71.30971, "note": "Barrio cerrado a 12 min del centro de San Martín. Chimenea, parrilla y vista. Sin reseñas propias todavía (la anfitriona tiene 4,89 en otras casas).", "photos": ["fotos/rincon-radales-1.jpg", "fotos/rincon-radales-2.jpg"], "price": "", "priceTotal": 2303, "specs": "San Martín de los Andes · 4 dorm · 5 camas · 3,5 baños · hasta 7", "title": "Casa en Rincón Radales", "url": "https://www.airbnb.com.ar/rooms/874019513161457894?adults=7&check_in=2026-12-27&check_out=2027-01-03", "zone": "sma", "id": "rincon-radales"}];
+  const MAXV = 3;
+  let people = {}, clerk = null, msgTimer = null;
+  canWrite = true;
+  $("addSection").hidden = true;
+  const flash = t => { const m = $("voteMsg"); m.textContent = t; m.hidden = !t; clearTimeout(msgTimer); if (t) msgTimer = setTimeout(() => { m.hidden = true; }, 5000); };
+  function showWho() {
+    $("loginBox").hidden = !!me || !clerk; $("whoBox").hidden = !me;
+    if (me) $("whoName").textContent = clerk.user.firstName || clerk.user.username || (clerk.user.primaryEmailAddress && clerk.user.primaryEmailAddress.emailAddress.split("@")[0]) || "vos";
+  }
+  async function initAuth() {
+    try {
+      const cfg = await (await fetch("/api/config", { cache: "no-store" })).json();
+      const pk = cfg.publishableKey;
+      if (!pk) throw 0;
+      const fapi = atob(pk.split("_")[2]).slice(0, -1);
+      const add = (src, attrs) => new Promise((ok, bad) => { const s = document.createElement("script"); s.src = src; s.async = true; s.crossOrigin = "anonymous"; Object.entries(attrs || {}).forEach(([k, v]) => s.setAttribute(k, v)); s.onload = ok; s.onerror = bad; document.head.append(s); });
+      await add("https://" + fapi + "/npm/@clerk/ui@1/dist/ui.browser.js");
+      await add("https://" + fapi + "/npm/@clerk/clerk-js@6/dist/clerk.browser.js", { "data-clerk-publishable-key": pk });
+      await window.Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
+      clerk = window.Clerk;
+      const sync = () => { me = clerk.isSignedIn && clerk.user ? clerk.user.id : null; showWho(); render(); };
+      clerk.addListener(sync); sync();
+    } catch { $("loginBox").hidden = false; $("loginBtn").disabled = true; $("loginErr").hidden = false; }
+  }
+  $("loginBtn").onclick = () => clerk && clerk.openSignIn();
+  $("logoutBtn").onclick = () => clerk && clerk.signOut();
+  async function load() {
+    try {
+      const r = await fetch("/api/votes", { cache: "no-store" });
+      if (!r.ok) throw 0;
+      const j = await r.json();
+      votes = {}; people = {};
+      for (const [k, v] of Object.entries(j.votes || {})) { votes[k] = v.picks || []; people[k] = v; }
+      render();
+    } catch { statusEl.hidden = false; statusEl.textContent = "No se pudieron cargar los votos. Recargá la página."; }
+  }
+  const chip = k => {
+    const p = people[k] || {};
+    if (p.image) { const i = document.createElement("img"); i.className = "av"; i.src = p.image; i.alt = p.name || ""; i.title = p.name || ""; return i; }
+    const s = document.createElement("span"); s.className = "chip"; s.textContent = (p.name || "?").charAt(0).toUpperCase(); s.title = p.name || ""; return s;
+  };
+
+  function goTo(id) {
+    const el = document.getElementById("card-" + id);
+    if (!el) { filter = "todas"; document.querySelectorAll("[data-f]").forEach(x => x.setAttribute("aria-pressed", x.dataset.f === "todas" ? "true" : "false")); render().then(() => goTo(id)); return; }
+    el.scrollIntoView({ block: "start" });
+    el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+  }
+
+  let renderSeq = 0;
+  async function render() {
+    const seq = ++renderSeq;
+    const tally = {};
+    for (const [uid, ps] of Object.entries(votes)) for (const oid of ps || []) (tally[oid] ||= []).push(uid);
+    const voterIds = Object.keys(votes).filter(k => (votes[k] || []).length);
+    if (seq !== renderSeq) return;
+    const myPicks = new Set(me ? votes[me] || [] : []);
+
+    const byVotes = [...options].sort((a, b) => (tally[b.id]?.length || 0) - (tally[a.id]?.length || 0) || (a.priceTotal || 1e9) - (b.priceTotal || 1e9) || (a.createdAt || 0) - (b.createdAt || 0));
+    const numOf = new Map(byVotes.map((o, i) => [o.id, i + 1]));
+    const topCount = byVotes.length ? (tally[byVotes[0].id]?.length || 0) : 0;
+    const leaders = byVotes.filter(o => topCount > 0 && (tally[o.id]?.length || 0) === topCount);
+    const leadId = leaders.length === 1 ? leaders[0].id : null;
+
+    // encabezado
+    $("tally").hidden = false;
+    $("tallyText").textContent = voterIds.length + " de " + GROUP + " votaron" + (me ? " · te quedan " + (MAXV - myPicks.size) + " de " + MAXV + " votos" : "");
+    $("tallyBar").style.width = Math.min(100, voterIds.length / GROUP * 100) + "%";
+    $("tallyLead").textContent = leadId ? "Va ganando: " + (leaders[0].title || "") : leaders.length > 1 ? "Empate entre " + leaders.length + " casas" : "";
+    const who = $("tallyWho"); who.replaceChildren();
+    for (const uid of voterIds) who.append(chip(uid));
+
+    // mapa
+    for (const [zk, m] of Object.entries(MAPS)) {
+    const box = $("mapbox-" + zk); box.querySelectorAll(".pin").forEach(p => p.remove());
+    for (const o of byVotes) {
+      if (typeof o.lat !== "number" || typeof o.lng !== "number") continue;
+      const [x, y] = toTile(o.lat, o.lng);
+      if (x < m.x0 || x > m.x1 || y < m.y0 || y > m.y1) continue;
+      const pin = document.createElement("button");
+      pin.type = "button";
+      pin.className = "pin" + (o.id === leadId ? " lead" : "") + (myPicks.has(o.id) ? " mine" : "") + (o.approx ? " approx" : "");
+      pin.style.left = ((x - m.x0) / (m.x1 - m.x0) * 100) + "%";
+      pin.style.top = ((y - m.y0) / (m.y1 - m.y0) * 100) + "%";
+      const s = document.createElement("span"); s.textContent = numOf.get(o.id); pin.append(s);
+      pin.title = (o.title || "") + (o.priceTotal ? " · " + fmt(o.priceTotal) : "");
+      pin.setAttribute("aria-label", "Ir a " + (o.title || "esta casa"));
+      pin.onclick = () => goTo(o.id);
+      box.append(pin);
+    }
+    }
+
+    // lista
+    let shown = byVotes.filter(o => filter === "todas" || zoneOf(o) === filter);
+    if (byPrice) shown = [...shown].sort((a, b) => (a.priceTotal || 1e9) - (b.priceTotal || 1e9));
+    statusEl.hidden = shown.length > 0;
+    if (!options.length) statusEl.textContent = "Todavía no hay opciones. Sumá la primera con el formulario de abajo.";
+    else if (!shown.length) statusEl.textContent = "No hay opciones en esta zona.";
+    listEl.replaceChildren();
+
+    for (const o of shown) {
+      const n = tally[o.id]?.length || 0;
+      const mine = myPicks.has(o.id);
+      const card = document.createElement("article");
+      card.className = "card" + (mine ? " mine" : "");
+      card.id = "card-" + o.id;
+
+      // fotos
+      const ph = document.createElement("div"); ph.className = "photo";
+      const pics = photosOf(o);
+      if (pics.length) {
+        const strip = document.createElement("div"); strip.className = "strip";
+        pics.forEach((src, i) => { const img = document.createElement("img"); img.src = src; img.alt = (o.title || "Casa") + ", foto " + (i + 1); img.loading = i ? "lazy" : "eager"; img.draggable = false; strip.append(img); });
+        ph.append(strip);
+        if (pics.length > 1) {
+          const dots = document.createElement("div"); dots.className = "dots";
+          pics.forEach(() => dots.append(document.createElement("i")));
+          const setDots = i => [...dots.children].forEach((d, j) => d.classList.toggle("on", j === i));
+          const start = Math.min(slide.get(o.id) || 0, pics.length - 1);
+          setDots(start);
+          requestAnimationFrame(() => { strip.style.scrollBehavior = "auto"; strip.scrollLeft = start * strip.clientWidth; strip.style.scrollBehavior = ""; });
+          strip.addEventListener("scroll", () => { const i = Math.round(strip.scrollLeft / Math.max(1, strip.clientWidth)); slide.set(o.id, i); setDots(i); }, { passive: true });
+          const go = d => { const i = Math.max(0, Math.min(pics.length - 1, Math.round(strip.scrollLeft / strip.clientWidth) + d)); strip.scrollTo({ left: i * strip.clientWidth }); };
+          const pv = document.createElement("button"); pv.className = "nav prev"; pv.type = "button"; pv.textContent = "‹"; pv.setAttribute("aria-label", "Foto anterior"); pv.onclick = () => go(-1);
+          const nx = document.createElement("button"); nx.className = "nav next"; nx.type = "button"; nx.textContent = "›"; nx.setAttribute("aria-label", "Foto siguiente"); nx.onclick = () => go(1);
+          ph.append(pv, nx, dots);
+        }
+      } else {
+        const e = document.createElement("div"); e.className = "ph-empty";
+        const pl = document.createElement("div"); pl.className = "ph-place"; pl.textContent = zoneName(zoneOf(o));
+        e.append(pl);
+        if (uploading.has(o.id)) { const h = document.createElement("div"); h.className = "ph-hint"; h.textContent = "Subiendo foto…"; e.append(h); }
+        else if (assets && me) {
+          const b = document.createElement("button"); b.className = "ph-btn"; b.type = "button"; b.textContent = "Agregar foto"; b.onclick = () => askPhoto(o.id);
+          const h = document.createElement("div"); h.className = "ph-hint"; h.textContent = "o arrastrala acá";
+          e.append(b, h);
+        }
+        ph.append(e);
+      }
+      if (assets && me) {
+        ph.addEventListener("dragover", ev => { ev.preventDefault(); });
+        ph.addEventListener("drop", ev => { ev.preventDefault(); const f = ev.dataTransfer?.files?.[0]; if (f) uploadPhoto(o.id, f); });
+      }
+      const badges = document.createElement("div"); badges.className = "badges";
+      const num = document.createElement("span"); num.className = "num" + (o.id === leadId ? " lead" : ""); num.textContent = numOf.get(o.id);
+      const lb = document.createElement("span");
+      if (o.id === leadId) { lb.className = "badge lead"; lb.textContent = "Va ganando"; } else if (mine) { lb.className = "badge"; lb.textContent = "Tu voto"; }
+      badges.append(num, lb);
+      ph.append(badges);
+
+      // info
+      const info = document.createElement("div"); info.className = "info";
+      const src = sourceOf(o.url || "");
+      const sr = document.createElement("div"); sr.className = "src";
+      const s = document.createElement("span"); s.className = "s " + src.key; s.textContent = src.label;
+      const z = document.createElement("span"); z.textContent = zoneName(zoneOf(o));
+      sr.append(s, z);
+      const t = document.createElement("h3"); t.className = "title"; t.textContent = o.title || "Opción sin nombre";
+      info.append(sr, t);
+      const pr = document.createElement("div"); pr.className = "priceRow";
+      if (typeof o.priceTotal === "number") {
+        const a = document.createElement("span"); a.className = "ptotal"; a.textContent = (o.priceEstimate ? "≈ " : "") + fmt(o.priceTotal); pr.append(a);
+        if (typeof o.priceBefore === "number") { const b = document.createElement("span"); b.className = "pbefore"; b.textContent = fmt(o.priceBefore); pr.append(b); }
+        const c = document.createElement("span"); c.className = "pnight"; c.textContent = fmt(o.priceTotal / NIGHTS) + " por noche, o " + fmt(o.priceTotal / GROUP) + " por persona la semana"; pr.append(c);
+      } else if (o.price) {
+        const a = document.createElement("span"); a.className = "ptotal"; a.textContent = o.price; pr.append(a);
+      } else {
+        const a = document.createElement("span"); a.className = "pnone"; a.textContent = "Precio a consultar"; pr.append(a);
+      }
+      info.append(pr);
+      if (o.specs) { const p = document.createElement("p"); p.className = "specs"; p.textContent = o.specs; info.append(p); }
+      if (o.note) { const p = document.createElement("p"); p.className = "note"; p.textContent = o.note; info.append(p); }
+
+      // pie
+      const foot = document.createElement("div"); foot.className = "foot";
+      const links = document.createElement("div"); links.className = "links";
+      const href = safeUrl(o.url || "");
+      if (href) { const a = document.createElement("a"); a.href = href; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Ver anuncio ↗"; links.append(a); }
+      if (me && (o.addedBy === me || canEdit)) {
+        const del = document.createElement("button"); del.className = "linkbtn danger"; del.type = "button"; del.textContent = "Quitar";
+        del.onclick = () => {
+          if (del.dataset.confirm) { removeOption(o.id); return; }
+          del.dataset.confirm = "1"; del.textContent = "¿Seguro? Tocá de nuevo";
+          setTimeout(() => { if (del.isConnected) { delete del.dataset.confirm; del.textContent = "Quitar"; } }, 4000);
+        };
+        links.append(del);
+      }
+      const vote = document.createElement("div"); vote.className = "vote";
+      const vs = document.createElement("div"); vs.className = "voters";
+      for (const uid of tally[o.id] || []) vs.append(chip(uid));
+      const cnt = document.createElement("span"); cnt.className = "count"; cnt.textContent = n ? n + (n === 1 ? " voto" : " votos") : "";
+      const b = document.createElement("button"); b.className = "vbtn"; b.type = "button";
+      b.setAttribute("aria-pressed", mine ? "true" : "false");
+      b.textContent = mine ? "✓ Mi voto" : "Votar";
+      b.setAttribute("aria-label", mine ? "Sacar mi voto de " + (o.title || "esta opción") : "Votar por " + (o.title || "esta opción"));
+      b.disabled = busy;
+      b.onclick = () => togglePick(o.id);
+      vote.append(vs, cnt, b);
+      foot.append(links, vote);
+
+      card.append(ph, info, foot);
+      listEl.append(card);
+    }
+  }
+
+  async function togglePick(oid) {
+    if (!me) { if (clerk) clerk.openSignIn(); else flash("Entrá con Google para votar."); return; }
+    if (busy) return;
+    const cur = new Set(votes[me] || []);
+    if (cur.has(oid)) cur.delete(oid);
+    else if (cur.size >= MAXV) { flash("Ya usaste tus " + MAXV + " votos. Sacá uno para votar otra casa."); return; }
+    else cur.add(oid);
+    busy = true; render();
+    try {
+      const token = await clerk.session.getToken();
+      const r = await fetch("/api/votes", { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + token }, body: JSON.stringify({ picks: [...cur] }) });
+      if (!r.ok) throw 0;
+      const j = await r.json();
+      votes[me] = j.picks; people[me] = { name: j.name, image: j.image, picks: j.picks };
+      flash("");
+    } catch { flash("No se pudo guardar tu voto. Probá de nuevo."); }
+    busy = false; render();
+  }
+
+  function askPhoto(oid) { uploadTarget = oid; filePick.value = ""; filePick.click(); }
+  filePick.addEventListener("change", () => { const f = filePick.files?.[0]; if (f && uploadTarget) uploadPhoto(uploadTarget, f); });
+
+  async function uploadPhoto(oid, file) {
+    if (!assets || !file.type.startsWith("image/")) return;
+    uploading.add(oid); render();
+    try {
+      const r = await assets.upload(file);
+      await db.doc("options/" + oid).update({ photoId: r.id, photoUrl: r.url });
+    } catch {
+      statusEl.hidden = false;
+      statusEl.textContent = "No se pudo subir la foto. Probá con una imagen de menos de 20 MB.";
+    }
+    uploading.delete(oid); render();
+  }
+
+  async function removeOption(oid) {
+    try { await db.doc("options/" + oid).delete(); }
+    catch { statusEl.hidden = false; statusEl.textContent = "No se pudo quitar la opción."; }
+  }
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    formMsg.className = "msg";
+    const url = $("fUrl").value.trim();
+    if (!safeUrl(url)) { formMsg.className = "msg err"; formMsg.textContent = "Pegá un link completo, que empiece con https://"; return; }
+    const src = sourceOf(url);
+    const data = {
+      url, title: $("fTitle").value.trim() || ("Opción de " + src.label),
+      price: $("fPrice").value.trim(), specs: $("fSpecs").value.trim(), note: $("fNote").value.trim(),
+      addedBy: me, createdAt: Date.now()
+    };
+    try { await db.collection("options").add(data); form.reset(); formMsg.textContent = "Opción agregada."; }
+    catch (err) {
+      formMsg.className = "msg err";
+      formMsg.textContent = err && err.code === "quota_exceeded" ? "La lista está llena. Quitá alguna opción antes de sumar otra." : "No se pudo agregar. Revisá que tengas acceso de colaborador.";
+    }
+  });
+
+  render(); load(); initAuth(); setInterval(load, 15000);
+})();
+</script>
+</body></html>
