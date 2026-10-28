@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><title>Casa de Año Nuevo</title><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="es"><head><meta charset="utf-8"><title>Viaje al Sur 2027</title><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
@@ -31,6 +31,17 @@ img{max-width:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
 .wrap{max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:32px}
 header{display:grid;gap:12px}
+.cover{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/9;max-width:100%;background:var(--ph-a);box-shadow:var(--shadow);margin-bottom:6px}
+.cover img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;display:block}
+.cover-text{display:grid;gap:4px}
+.cover-text h1{font-size:clamp(36px,7vw,64px)}
+@media (max-width:640px){.cover{aspect-ratio:4/3}}
+body.gate .app-only, body.gate #tally, body.gate .mapsec, body.gate .cmp, body.gate .list-sec, body.gate #addSection{display:none!important}
+body:not(.gate) .gate-only{display:none!important}
+body.gate .wrap{max-width:860px}
+body.gate .cover{aspect-ratio:auto;height:min(62vh,560px)}
+@media (max-width:640px){body.gate .cover{height:auto;aspect-ratio:4/3}}
+body.gate .gbtn{font-size:17px;padding:14px 26px}
 .eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700}
 h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,56px);line-height:1;margin:0;text-wrap:balance;letter-spacing:-.01em}
 h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0;text-wrap:balance}
@@ -107,6 +118,21 @@ h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0;text-wrap:
 .ptotal{font-family:var(--display);font-weight:800;font-size:22px;color:var(--fg)}
 .pbefore{color:var(--muted);text-decoration:line-through;font-size:14px}
 .pnight{color:var(--muted);font-size:14px}
+.spec{display:grid;grid-template-columns:max-content 1fr;gap:5px 14px;margin:4px 0 0;font-size:14px}
+.spec dt{color:var(--muted)}
+.spec dd{margin:0;min-width:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.spec .na{color:var(--muted);font-style:italic}
+.cmp{display:grid;gap:12px}
+.tablewrap{overflow-x:auto;background:var(--surface);border-radius:14px;box-shadow:var(--shadow)}
+#cmpTable{border-collapse:collapse;width:100%;font-size:14px;white-space:nowrap}
+#cmpTable th{text-align:left;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
+#cmpTable td{padding:9px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+#cmpTable tr:last-child td{border-bottom:0}
+#cmpTable tbody tr{cursor:pointer}
+#cmpTable tbody tr:hover{background:var(--accent-soft)}
+#cmpTable tbody tr.lead td:first-child{color:var(--sun);font-weight:800}
+#cmpTable .r{text-align:right}
+#cmpTable .na{color:var(--muted);font-style:italic}
 .pnone{color:var(--muted);font-size:14px;font-style:italic}
 .specs{color:var(--fg);font-size:14px;margin:0;font-variant-numeric:tabular-nums}
 .note{color:var(--muted);font-size:14px;margin:0;overflow-wrap:anywhere}
@@ -138,15 +164,21 @@ textarea{resize:vertical;min-height:60px}
 @media (prefers-reduced-motion:no-preference){.vbtn,.fbtn{transition:background .15s,color .15s}.bar i{transition:width .4s ease}.strip{scroll-behavior:smooth}}
 @media (prefers-reduced-motion:reduce){.card.flash{animation:none}}
 </style>
-</head><body>
+</head><body class="gate">
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Año Nuevo en la Patagonia</div>
-    <h1>¿Dónde nos quedamos?</h1>
+    <div class="cover-text">
+      <div class="eyebrow">Votación</div>
+      <h1>Viaje al Sur 2027</h1>
+    </div>
+    <div class="cover">
+      <img src="portada.jpg?v=2" alt="El grupo de amigos en un banco con montañas nevadas y un lago de fondo" width="858" height="1024">
+    </div>
     <div class="trip"><span class="pill">27 dic → 3 ene</span><span class="pill">7 noches</span><span class="pill">7 personas</span></div>
-    <p class="lede">Cada uno tiene hasta 3 votos: marcá las casas que más te gusten (no hace falta usar los 3). Podés sacar un voto y ponerlo en otra cuando quieras. Deslizá las fotos de cada casa para ver más.</p>
-    <div class="authbox" id="loginBox" hidden><button class="gbtn" type="button" id="loginBtn">Entrar con Google para votar</button><span class="mapnote" id="loginErr" hidden>El inicio de sesión no está disponible todavía.</span></div>
+    <p class="lede gate-only">Entrá con tu cuenta de Google para ver las casas y votar. <b>Cada uno tiene hasta 3 votos.</b></p>
+    <p class="lede app-only">Cada uno tiene hasta 3 votos: marcá las casas que más te gusten (no hace falta usar los 3). Podés sacar un voto y ponerlo en otra cuando quieras. Deslizá las fotos de cada casa para ver más.</p>
+    <div class="authbox" id="loginBox"><button class="gbtn" type="button" id="loginBtn">Entrar con Google para votar</button><span class="mapnote" id="loginErr" hidden>El inicio de sesión no está disponible todavía.</span></div>
     <p class="authbox" id="whoBox" hidden>Votás como <b id="whoName"></b> · <button class="linkbtn" type="button" id="logoutBtn">Salir</button></p>
     <p class="votemsg" id="voteMsg" role="status" hidden></p>
     <div class="tally" id="tally" hidden>
@@ -165,7 +197,13 @@ textarea{resize:vertical;min-height:60px}
     <p class="mapnote">Tocá un número para ir a esa casa. Los pines punteados tienen ubicación aproximada. Mapa © colaboradores de OpenStreetMap.</p>
   </section>
 
-  <section style="display:grid;gap:16px" aria-labelledby="listTitle">
+  <section class="cmp" aria-labelledby="cmpTitle">
+    <h2 id="cmpTitle">Comparar</h2>
+    <div class="tablewrap"><table id="cmpTable"><thead><tr><th>#</th><th>Ciudad</th><th>Origen</th><th class="r">Total</th><th class="r">Por día</th><th class="r">Dorm.</th><th class="r">Baños</th><th class="r">Huésp.</th><th>Calificación</th><th>Hogar</th><th>Parrilla</th></tr></thead><tbody></tbody></table></div>
+    <p class="mapnote">Tocá una fila para ir a esa casa. Los precios con ≈ son estimados.</p>
+  </section>
+
+  <section class="list-sec" style="display:grid;gap:16px" aria-labelledby="listTitle">
     <div class="listhead">
       <h2 id="listTitle">Las opciones</h2>
       <div class="seg" role="group" aria-label="Ordenar y filtrar">
@@ -226,6 +264,7 @@ textarea{resize:vertical;min-height:60px}
       const h = new URL(url).hostname;
       if (h.includes("airbnb")) return { key: "airbnb", label: "Airbnb" };
       if (h.includes("mercadolibre")) return { key: "ml", label: "Mercado Libre" };
+      if (h.includes("patagoniaalquileres")) return { key: "otro", label: "Patagonia Alquileres" };
       return { key: "otro", label: h.replace(/^www\./, "").split(".")[0] };
     } catch { return { key: "otro", label: "Link" }; }
   };
@@ -237,6 +276,12 @@ textarea{resize:vertical;min-height:60px}
     if (/san mart[ií]n/i.test(s)) return "sma";
     return "otra";
   };
+  const SPEC = {"rincon-radales": ["Rincón Radales, barrio cerrado a 12 min del centro", "4", "5", "3,5", "7", "Sin reseñas (anfitriona 4,89 en otras casas)", "Sí", "Sí", "Vista y ventanales grandes", "No figura detector de humo ni de monóxido"], "bariloche-vista-lago": ["Costa del Nahuel Huapi", "5", "8", "3,5", "10", "Sin reseñas", "No lo dice", "No lo dice", "Vista al lago desde todos los ambientes", "No figura detector de humo ni de monóxido"], "cabana-del-puma": ["Las Pendientes (Chapelco)", "4", "8", "2,5", "10", "5,0 (1 reseña)", "Sí", "No lo dice", "Losa radiante, al lado de las pistas", "Fotos de invierno"], "espectacular-casa-bariloche": ["Bariloche, oeste del centro", "4", "8", "2", "8", "5,0 (2 reseñas)", "No lo dice", "Sí, con quincho", "Jacuzzi, brasero y aire acondicionado", "—"], "bariloche-5-dorm": ["A pocas cuadras del centro", "5", "6", "2", "8", "Sin reseñas (anfitrión 4,88 en otras casas)", "No lo dice", "No lo dice", "Vista al lago", "Anuncio nuevo"], "las-pendientes-ski-village": ["Las Pendientes (Chapelco)", "4", "8", "2,5", "8", "4,83 (6 reseñas)", "Sí", "No lo dice", "Grupo electrógeno, acepta mascotas", "Una reseña dice que la cocina está poco equipada"], "casa-sonada-montana": ["Zona Meliquina, en la montaña", "4", "5", "4", "8", "5,0 (1 reseña)", "Sí", "No lo dice", "Jacuzzi, arroyo y terreno de 1 hectárea", "—"], "la-grande-cuca": ["5 km del centro, camino de ripio", "4", "5", "2", "8", "5,0 (3 reseñas)", "Sí", "Sí", "—", "—"], "las-pendientes-chapelco": ["Las Pendientes (Chapelco)", "4", "9", "2,5", "8", "4,73 (37 reseñas)", "Sí", "Sí", "Vista al volcán Lanín, 250 m²", "Fotos de invierno"], "catedral-primera-linea": ["Villa Catedral", "4", "7", "3", "9", "Sin reseñas (anfitrión 4,55 en otras casas)", "Sí", "Sí", "Fogonero", "—"], "casa-de-bosque": ["3 km del centro, en el bosque", "5", "8", "3", "10", "4,63 (8 reseñas)", "Sí", "Sí", "Huerta y senderos en el bosque", "—"], "los-riscos": ["Barrio Los Riscos", "4", "No lo dice", "4", "8", "Sin reseñas (inmobiliaria)", "Sí", "Sí", "Vista a las montañas", "Mismo dueño que Rincón Radales"], "ml-penon-del-lolog": ["Peñón del Lolog, barrio privado a 6 km", "4", "No lo dice", "3", "12", "Sin reseñas (Mercado Libre)", "Sí", "No lo dice", "Pileta climatizada y playroom", "Precio estimado, mínimo 4 noches, fotos de invierno"], "ml-bariloche-pioneros": ["Av. de los Pioneros km 5", "5", "No lo dice", "4", "10", "Sin reseñas (Mercado Libre)", "No lo dice", "No lo dice", "Vista al lago, calefacción central", "Precio estimado, aviso de hace 10 años, fotos de 2014"]};
+  const ROWS = ["Barrio", "Dormitorios", "Camas", "Baños", "Huéspedes", "Calificación", "Hogar", "Parrilla", "Extras", "A tener en cuenta"];
+  const cityOf = o => { const z = zoneOf(o); return z === "sma" ? "San Martín de los Andes" : z === "brc" ? "Bariloche" : "Patagonia"; };
+  const label = (o, numOf) => "la #" + numOf.get(o.id) + " (" + cityOf(o) + ", " + sourceOf(o.url || "").label + ")";
+  const shortRate = t => !t ? "—" : /^sin rese/i.test(t) ? "Sin reseñas" : t.replace(/ rese(ñ|n)as?\)/, ")");
+  const shortYes = t => !t ? "—" : /^s[ií]/i.test(t) ? "Sí" : t;
   const zoneName = z => z === "sma" ? "San Martín" : z === "brc" ? "Bariloche" : "Patagonia";
   const pickOf = d => d && (typeof d.pick === "string" ? d.pick : Array.isArray(d.picks) && d.picks.length ? d.picks[0] : null);
   const photosOf = o => {
@@ -265,7 +310,8 @@ textarea{resize:vertical;min-height:60px}
   $("addSection").hidden = true;
   const flash = t => { const m = $("voteMsg"); m.textContent = t; m.hidden = !t; clearTimeout(msgTimer); if (t) msgTimer = setTimeout(() => { m.hidden = true; }, 5000); };
   function showWho() {
-    $("loginBox").hidden = !!me || !clerk; $("whoBox").hidden = !me;
+    $("loginBox").hidden = !!me; $("loginBtn").disabled = !clerk; $("whoBox").hidden = !me;
+    document.body.classList.toggle("gate", !me);
     if (me) $("whoName").textContent = clerk.user.firstName || clerk.user.username || (clerk.user.primaryEmailAddress && clerk.user.primaryEmailAddress.emailAddress.split("@")[0]) || "vos";
   }
   async function initAuth() {
@@ -327,7 +373,7 @@ textarea{resize:vertical;min-height:60px}
     $("tally").hidden = false;
     $("tallyText").textContent = voterIds.length + " de " + GROUP + " votaron" + (me ? " · te quedan " + (MAXV - myPicks.size) + " de " + MAXV + " votos" : "");
     $("tallyBar").style.width = Math.min(100, voterIds.length / GROUP * 100) + "%";
-    $("tallyLead").textContent = leadId ? "Va ganando: " + (leaders[0].title || "") : leaders.length > 1 ? "Empate entre " + leaders.length + " casas" : "";
+    $("tallyLead").textContent = leadId ? "Va ganando: " + label(leaders[0], numOf) : leaders.length > 1 ? "Empate entre " + leaders.length + " casas" : "";
     const who = $("tallyWho"); who.replaceChildren();
     for (const uid of voterIds) who.append(chip(uid));
 
@@ -344,8 +390,8 @@ textarea{resize:vertical;min-height:60px}
       pin.style.left = ((x - m.x0) / (m.x1 - m.x0) * 100) + "%";
       pin.style.top = ((y - m.y0) / (m.y1 - m.y0) * 100) + "%";
       const s = document.createElement("span"); s.textContent = numOf.get(o.id); pin.append(s);
-      pin.title = (o.title || "") + (o.priceTotal ? " · " + fmt(o.priceTotal) : "");
-      pin.setAttribute("aria-label", "Ir a " + (o.title || "esta casa"));
+      pin.title = label(o, numOf) + (o.priceTotal ? " · " + fmt(o.priceTotal / NIGHTS) + " por día" : "");
+      pin.setAttribute("aria-label", "Ir a la casa " + numOf.get(o.id));
       pin.onclick = () => goTo(o.id);
       box.append(pin);
     }
@@ -358,6 +404,19 @@ textarea{resize:vertical;min-height:60px}
     if (!options.length) statusEl.textContent = "Todavía no hay opciones. Sumá la primera con el formulario de abajo.";
     else if (!shown.length) statusEl.textContent = "No hay opciones en esta zona.";
     listEl.replaceChildren();
+    const tb = document.querySelector("#cmpTable tbody"); tb.replaceChildren();
+    for (const o of shown) {
+      const sp = SPEC[o.id] || [];
+      const tr = document.createElement("tr"); tr.tabIndex = 0;
+      const cells = ["#" + numOf.get(o.id), cityOf(o), sourceOf(o.url || "").label,
+        typeof o.priceTotal === "number" ? (o.priceEstimate ? "≈ " : "") + fmt(o.priceTotal) : (o.price || "—"),
+        typeof o.priceTotal === "number" ? fmt(o.priceTotal / NIGHTS) : "—",
+        sp[1] || "—", sp[3] || "—", sp[4] || "—", shortRate(sp[5]), shortYes(sp[6]), shortYes(sp[7])];
+      cells.forEach((c, i) => { const td = document.createElement("td"); td.textContent = c; if (i >= 3 && i <= 7) td.className = "r"; if (/^no lo dice$/i.test(c)) td.className = "na"; tr.append(td); });
+      tr.onclick = () => goTo(o.id); tr.onkeydown = e => { if (e.key === "Enter") goTo(o.id); };
+      if (o.id === leadId) tr.className = "lead";
+      tb.append(tr);
+    }
 
     for (const o of shown) {
       const n = tally[o.id]?.length || 0;
@@ -371,7 +430,7 @@ textarea{resize:vertical;min-height:60px}
       const pics = photosOf(o);
       if (pics.length) {
         const strip = document.createElement("div"); strip.className = "strip";
-        pics.forEach((src, i) => { const img = document.createElement("img"); img.src = src; img.alt = (o.title || "Casa") + ", foto " + (i + 1); img.loading = i ? "lazy" : "eager"; img.draggable = false; strip.append(img); });
+        pics.forEach((src, i) => { const img = document.createElement("img"); img.src = src; img.alt = "Casa " + numOf.get(o.id) + ", foto " + (i + 1); img.loading = i ? "lazy" : "eager"; img.draggable = false; strip.append(img); });
         ph.append(strip);
         if (pics.length > 1) {
           const dots = document.createElement("div"); dots.className = "dots";
@@ -414,23 +473,26 @@ textarea{resize:vertical;min-height:60px}
       const src = sourceOf(o.url || "");
       const sr = document.createElement("div"); sr.className = "src";
       const s = document.createElement("span"); s.className = "s " + src.key; s.textContent = src.label;
-      const z = document.createElement("span"); z.textContent = zoneName(zoneOf(o));
-      sr.append(s, z);
-      const t = document.createElement("h3"); t.className = "title"; t.textContent = o.title || "Opción sin nombre";
+      sr.append(s);
+      const t = document.createElement("h3"); t.className = "title"; t.textContent = cityOf(o);
       info.append(sr, t);
       const pr = document.createElement("div"); pr.className = "priceRow";
       if (typeof o.priceTotal === "number") {
         const a = document.createElement("span"); a.className = "ptotal"; a.textContent = (o.priceEstimate ? "≈ " : "") + fmt(o.priceTotal); pr.append(a);
         if (typeof o.priceBefore === "number") { const b = document.createElement("span"); b.className = "pbefore"; b.textContent = fmt(o.priceBefore); pr.append(b); }
-        const c = document.createElement("span"); c.className = "pnight"; c.textContent = fmt(o.priceTotal / NIGHTS) + " por noche, o " + fmt(o.priceTotal / GROUP) + " por persona la semana"; pr.append(c);
+        const c = document.createElement("span"); c.className = "pnight"; c.textContent = fmt(o.priceTotal / NIGHTS) + " por día"; pr.append(c);
       } else if (o.price) {
         const a = document.createElement("span"); a.className = "ptotal"; a.textContent = o.price; pr.append(a);
       } else {
         const a = document.createElement("span"); a.className = "pnone"; a.textContent = "Precio a consultar"; pr.append(a);
       }
       info.append(pr);
-      if (o.specs) { const p = document.createElement("p"); p.className = "specs"; p.textContent = o.specs; info.append(p); }
-      if (o.note) { const p = document.createElement("p"); p.className = "note"; p.textContent = o.note; info.append(p); }
+      const sp = SPEC[o.id];
+      if (sp) {
+        const dl = document.createElement("dl"); dl.className = "spec";
+        ROWS.forEach((r, i) => { const dt = document.createElement("dt"); dt.textContent = r; const dd = document.createElement("dd"); dd.textContent = sp[i]; if (/^no lo dice$|^—$/i.test(sp[i])) dd.className = "na"; dl.append(dt, dd); });
+        info.append(dl);
+      } else if (o.specs || o.note) { const p = document.createElement("p"); p.className = "note"; p.textContent = [o.specs, o.note].filter(Boolean).join(" · "); info.append(p); }
 
       // pie
       const foot = document.createElement("div"); foot.className = "foot";
@@ -453,7 +515,7 @@ textarea{resize:vertical;min-height:60px}
       const b = document.createElement("button"); b.className = "vbtn"; b.type = "button";
       b.setAttribute("aria-pressed", mine ? "true" : "false");
       b.textContent = mine ? "✓ Mi voto" : "Votar";
-      b.setAttribute("aria-label", mine ? "Sacar mi voto de " + (o.title || "esta opción") : "Votar por " + (o.title || "esta opción"));
+      b.setAttribute("aria-label", (mine ? "Sacar mi voto de la casa " : "Votar por la casa ") + numOf.get(o.id));
       b.disabled = busy;
       b.onclick = () => togglePick(o.id);
       vote.append(vs, cnt, b);
