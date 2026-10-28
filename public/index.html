@@ -29,14 +29,16 @@
 img{max-width:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
-.wrap{max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:32px}
+.wrap{max-width:1200px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:32px}
 header{display:grid;gap:12px}
 .cover{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/9;max-width:100%;background:var(--ph-a);box-shadow:var(--shadow);margin-bottom:6px}
 .cover img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;display:block}
 .cover-text{display:grid;gap:4px}
 .cover-text h1{font-size:clamp(36px,7vw,64px)}
 @media (max-width:640px){.cover{aspect-ratio:4/3}}
-body.gate .app-only, body.gate #tally, body.gate .mapsec, body.gate .cmp, body.gate .list-sec, body.gate #addSection{display:none!important}
+body.gate .app-only, body.gate #tally, body.gate .mapsec, body.gate .list-sec, body.gate #addSection{display:none!important}
+body:not(.gate) .cover, body:not(.gate) .gate-hide{display:none!important}
+body:not(.gate) .cover-text h1{font-size:clamp(30px,5vw,44px)}
 body:not(.gate) .gate-only{display:none!important}
 body.gate .wrap{max-width:860px}
 body.gate .cover{aspect-ratio:auto;height:min(62vh,560px)}
@@ -86,7 +88,7 @@ h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0;text-wrap:
 /* tarjetas */
 .listhead{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between}
 .status{font-size:14px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:10px}
-#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr));gap:22px}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:16px}
 .card{background:var(--surface);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;border:2px solid transparent;scroll-margin-top:16px}
 .card.mine{border-color:var(--accent)}
 .card.flash{animation:flash 1.4s ease}
@@ -122,17 +124,6 @@ h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0;text-wrap:
 .spec dt{color:var(--muted)}
 .spec dd{margin:0;min-width:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 .spec .na{color:var(--muted);font-style:italic}
-.cmp{display:grid;gap:12px}
-.tablewrap{overflow-x:auto;background:var(--surface);border-radius:14px;box-shadow:var(--shadow)}
-#cmpTable{border-collapse:collapse;width:100%;font-size:14px;white-space:nowrap}
-#cmpTable th{text-align:left;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
-#cmpTable td{padding:9px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
-#cmpTable tr:last-child td{border-bottom:0}
-#cmpTable tbody tr{cursor:pointer}
-#cmpTable tbody tr:hover{background:var(--accent-soft)}
-#cmpTable tbody tr.lead td:first-child{color:var(--sun);font-weight:800}
-#cmpTable .r{text-align:right}
-#cmpTable .na{color:var(--muted);font-style:italic}
 .pnone{color:var(--muted);font-size:14px;font-style:italic}
 .specs{color:var(--fg);font-size:14px;margin:0;font-variant-numeric:tabular-nums}
 .note{color:var(--muted);font-size:14px;margin:0;overflow-wrap:anywhere}
@@ -163,6 +154,23 @@ textarea{resize:vertical;min-height:60px}
 @media (max-width:520px){.row{grid-template-columns:1fr}.title{font-size:19px}.pin{min-width:26px;height:26px;font-size:12px}.nav{display:none}}
 @media (prefers-reduced-motion:no-preference){.vbtn,.fbtn{transition:background .15s,color .15s}.bar i{transition:width .4s ease}.strip{scroll-behavior:smooth}}
 @media (prefers-reduced-motion:reduce){.card.flash{animation:none}}
+/* tarjetas compactas: 4 por fila */
+.card{border-radius:14px}
+.info{padding:12px 14px 10px;gap:6px}
+.title{font-size:17px}
+.ptotal{font-size:18px}
+.pnight,.pbefore{font-size:13px}
+.src{font-size:11px}
+.spec{font-size:12.5px;gap:3px 10px}
+.foot{padding:10px 14px;gap:8px}
+.links{font-size:13px;gap:10px}
+.vbtn{font-size:13px;padding:5px 12px}
+.voters img,.av,.chip{width:22px;height:22px;min-width:22px}
+.badges{top:8px;left:8px;right:8px}
+.num{font-size:13px;min-width:26px;height:26px}
+.badge{font-size:11px;padding:3px 8px}
+.nav{width:28px;height:28px;font-size:15px}
+.nav.prev{left:6px}.nav.next{right:6px}
 </style>
 </head><body class="gate">
 
@@ -175,7 +183,7 @@ textarea{resize:vertical;min-height:60px}
     <div class="cover">
       <img src="portada.jpg?v=2" alt="El grupo de amigos en un banco con montañas nevadas y un lago de fondo" width="858" height="1024">
     </div>
-    <div class="trip"><span class="pill">27 dic → 3 ene</span><span class="pill">7 noches</span><span class="pill">7 personas</span></div>
+    <div class="trip gate-hide"><span class="pill">27 dic → 3 ene</span><span class="pill">7 noches</span><span class="pill">7 personas</span></div>
     <p class="lede gate-only">Entrá con tu cuenta de Google para ver las casas y votar. <b>Cada uno tiene hasta 3 votos.</b></p>
     <p class="lede app-only">Cada uno tiene hasta 3 votos: marcá las casas que más te gusten (no hace falta usar los 3). Podés sacar un voto y ponerlo en otra cuando quieras. Deslizá las fotos de cada casa para ver más.</p>
     <div class="authbox" id="loginBox"><button class="gbtn" type="button" id="loginBtn">Entrar con Google para votar</button><span class="mapnote" id="loginErr" hidden>El inicio de sesión no está disponible todavía.</span></div>
@@ -195,12 +203,6 @@ textarea{resize:vertical;min-height:60px}
       <figure class="mapfig"><figcaption>Bariloche</figcaption><div class="mapbox" id="mapbox-brc"><img class="base" src="mapa-brc-v2.jpg" alt="Mapa de Bariloche con las casas marcadas" width="973" height="755"></div></figure>
     </div>
     <p class="mapnote">Tocá un número para ir a esa casa. Los pines punteados tienen ubicación aproximada. Mapa © colaboradores de OpenStreetMap.</p>
-  </section>
-
-  <section class="cmp" aria-labelledby="cmpTitle">
-    <h2 id="cmpTitle">Comparar</h2>
-    <div class="tablewrap"><table id="cmpTable"><thead><tr><th>#</th><th>Ciudad</th><th>Origen</th><th class="r">Total</th><th class="r">Por día</th><th class="r">Dorm.</th><th class="r">Baños</th><th class="r">Huésp.</th><th>Calificación</th><th>Hogar</th><th>Parrilla</th></tr></thead><tbody></tbody></table></div>
-    <p class="mapnote">Tocá una fila para ir a esa casa. Los precios con ≈ son estimados.</p>
   </section>
 
   <section class="list-sec" style="display:grid;gap:16px" aria-labelledby="listTitle">
@@ -404,19 +406,6 @@ textarea{resize:vertical;min-height:60px}
     if (!options.length) statusEl.textContent = "Todavía no hay opciones. Sumá la primera con el formulario de abajo.";
     else if (!shown.length) statusEl.textContent = "No hay opciones en esta zona.";
     listEl.replaceChildren();
-    const tb = document.querySelector("#cmpTable tbody"); tb.replaceChildren();
-    for (const o of shown) {
-      const sp = SPEC[o.id] || [];
-      const tr = document.createElement("tr"); tr.tabIndex = 0;
-      const cells = ["#" + numOf.get(o.id), cityOf(o), sourceOf(o.url || "").label,
-        typeof o.priceTotal === "number" ? (o.priceEstimate ? "≈ " : "") + fmt(o.priceTotal) : (o.price || "—"),
-        typeof o.priceTotal === "number" ? fmt(o.priceTotal / NIGHTS) : "—",
-        sp[1] || "—", sp[3] || "—", sp[4] || "—", shortRate(sp[5]), shortYes(sp[6]), shortYes(sp[7])];
-      cells.forEach((c, i) => { const td = document.createElement("td"); td.textContent = c; if (i >= 3 && i <= 7) td.className = "r"; if (/^no lo dice$/i.test(c)) td.className = "na"; tr.append(td); });
-      tr.onclick = () => goTo(o.id); tr.onkeydown = e => { if (e.key === "Enter") goTo(o.id); };
-      if (o.id === leadId) tr.className = "lead";
-      tb.append(tr);
-    }
 
     for (const o of shown) {
       const n = tally[o.id]?.length || 0;
