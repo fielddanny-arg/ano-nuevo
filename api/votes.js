@@ -63,9 +63,8 @@ module.exports = async (req, res) => {
     if (req.method === "GET") {
       const [all, user] = await Promise.all([readAll(), currentUser(req)]);
       const voters = Object.keys(all).length;
-      if (user && user.isAdmin) return res.status(200).json({ isAdmin: true, voters, votes: all });
-      const votes = user && all[user.id] ? { [user.id]: all[user.id] } : {};
-      return res.status(200).json({ isAdmin: false, voters, votes });
+      // Resultados públicos: cualquiera que abra la página ve todos los votos.
+      return res.status(200).json({ isAdmin: !!(user && user.isAdmin), reveal: true, voters, votes: all });
     }
 
     if (req.method === "POST") {
