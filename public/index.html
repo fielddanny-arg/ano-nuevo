@@ -174,9 +174,30 @@ textarea{resize:vertical;min-height:60px}
 .badge{font-size:11px;padding:3px 8px}
 .nav{width:28px;height:28px;font-size:15px}
 .nav.prev{left:6px}.nav.next{right:6px}
+/* estados: no disponible (rojo) y descalificada (amarillo) */
+:root{--out:#c0392b;--out-soft:#fbe4e1;--dq:#d4a017;--dq-soft:#fdf3d0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--out:#ff7b6b;--out-soft:#3d1c18;--dq:#f2c84b;--dq-soft:#3a3010}}
+:root[data-theme="dark"]{--out:#ff7b6b;--out-soft:#3d1c18;--dq:#f2c84b;--dq-soft:#3a3010}
+.card.st-out{border-color:var(--out);background:var(--out-soft)}
+.card.st-dq{border-color:var(--dq);background:var(--dq-soft)}
+.card.st-out .photo img,.card.st-dq .photo img{filter:grayscale(.75);opacity:.7}
+.card.st-out .ptotal{text-decoration:line-through;color:var(--muted)}
+.badge.st-out{background:var(--out);color:#fff}
+.badge.st-dq{background:var(--dq);color:#1b1500}
+.pin.st-out{background:var(--out);color:#fff}
+.pin.st-dq{background:var(--dq);color:#1b1500}
+.adminlist .faded{opacity:.75}
+.tag{font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;white-space:nowrap}
+.tag.st-out{background:var(--out);color:#fff}.tag.st-dq{background:var(--dq);color:#1b1500}
+.votedby{margin:0;font-size:13px;padding:6px 10px;border-radius:8px;background:var(--accent-soft);color:var(--fg)}
+.votedby b{color:var(--accent)}
+.legend{margin:4px 0 0;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.legend .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block;margin-left:6px}
+.legend .dot:first-child{margin-left:0}
+.legend .dot.st-dq{background:var(--dq)}.legend .dot.st-out{background:var(--out)}
 @media (max-width:640px){.vbtn{font-size:15px;padding:10px 22px}.links a{padding:8px 0}.fbtn{padding:8px 14px}}
 </style>
-</head><body class="gate">
+</head><body>
 
 <div class="wrap">
   <header>
@@ -190,14 +211,14 @@ textarea{resize:vertical;min-height:60px}
     <div class="trip gate-hide"><span class="pill">27 dic → 3 ene</span><span class="pill">7 noches</span><span class="pill">7 personas</span></div>
     <p class="lede gate-only">Entrá con tu cuenta de Google para ver las casas y votar. <b>Cada uno tiene hasta 3 votos.</b></p>
     <p class="lede app-only">Cada uno tiene hasta 3 votos: marcá las casas que más te gusten (no hace falta usar los 3). Podés sacar un voto y ponerlo en otra cuando quieras. Deslizá las fotos de cada casa para ver más.</p>
-    <div class="authbox" id="loginBox"><button class="gbtn" type="button" id="loginBtn">Entrar con Google para votar</button><span class="mapnote" id="loginErr" hidden>El inicio de sesión no está disponible todavía.</span></div>
+    <div class="authbox" id="loginBox"><button class="gbtn" type="button" id="loginBtn">Entrar con Google para cambiar tu voto</button><span class="mapnote" id="loginErr" hidden>El inicio de sesión no está disponible todavía.</span></div>
     <p class="authbox" id="whoBox" hidden>Votás como <b id="whoName"></b> · <button class="linkbtn" type="button" id="logoutBtn">Salir</button></p>
     <p class="votemsg" id="voteMsg" role="status" hidden></p>
     <div class="tally" id="tally" hidden>
       <div class="tally-top"><span id="tallyText">0 de 7 votaron</span><span id="tallyLead"></span></div>
       <div class="bar" aria-hidden="true"><i id="tallyBar"></i></div>
       <div class="who" id="tallyWho"></div>
-      <div id="adminBox" hidden><div class="adminhead">Resultados (solo vos ves esto)</div><ol id="adminList" class="adminlist"></ol></div>
+      <div id="adminBox" hidden><div class="adminhead">Resultados</div><ol id="adminList" class="adminlist"></ol></div>
     </div>
   </header>
 
@@ -212,7 +233,7 @@ textarea{resize:vertical;min-height:60px}
 
   <section class="list-sec" style="display:grid;gap:16px" aria-labelledby="listTitle">
     <div class="listhead">
-      <h2 id="listTitle">Las opciones</h2>
+      <div><h2 id="listTitle">Las opciones</h2><p class="legend"><span class="dot"></span>4 siguen en carrera <span class="dot st-dq"></span>8 descalificadas (1 voto o ninguno) <span class="dot st-out"></span>2 ya no están disponibles</p></div>
       <div class="seg" role="group" aria-label="Ordenar y filtrar">
         <button class="fbtn" type="button" data-f="todas" aria-pressed="true">Todas</button>
         <button class="fbtn" type="button" data-f="sma" aria-pressed="false">San Martín</button>
@@ -282,6 +303,14 @@ textarea{resize:vertical;min-height:60px}
     if (/san mart[ií]n/i.test(s)) return "sma";
     return "otra";
   };
+  // Estado de cada casa después de la primera votación (1 de noviembre).
+  const STATUS = {
+    "rincon-radales": "out", "la-grande-cuca": "out",
+    "las-pendientes-ski-village": "dq", "ml-bariloche-pioneros": "dq", "espectacular-casa-bariloche": "dq",
+    "las-pendientes-chapelco": "dq", "casa-sonada-montana": "dq", "catedral-primera-linea": "dq",
+    "bariloche-5-dorm": "dq", "cabana-del-puma": "dq"
+  };
+  const rank = id => STATUS[id] === "out" ? 2 : STATUS[id] === "dq" ? 1 : 0;
   const SPEC = {"rincon-radales": ["Rincón Radales, barrio cerrado a 12 min del centro", "4", "5", "3,5", "7", "Sin reseñas (anfitriona 4,89 en otras casas)", "Sí", "Sí", "Vista y ventanales grandes", "No figura detector de humo ni de monóxido"], "bariloche-vista-lago": ["Costa del Nahuel Huapi", "5", "8", "3,5", "10", "Sin reseñas", "No lo dice", "No lo dice", "Vista al lago desde todos los ambientes", "No figura detector de humo ni de monóxido"], "cabana-del-puma": ["Las Pendientes (Chapelco)", "4", "8", "2,5", "10", "5,0 (1 reseña)", "Sí", "No lo dice", "Losa radiante, al lado de las pistas", "Fotos de invierno"], "espectacular-casa-bariloche": ["Bariloche, oeste del centro", "4", "8", "2", "8", "5,0 (2 reseñas)", "No lo dice", "Sí, con quincho", "Jacuzzi, brasero y aire acondicionado", "—"], "bariloche-5-dorm": ["A pocas cuadras del centro", "5", "6", "2", "8", "Sin reseñas (anfitrión 4,88 en otras casas)", "No lo dice", "No lo dice", "Vista al lago", "Anuncio nuevo"], "las-pendientes-ski-village": ["Las Pendientes (Chapelco)", "4", "8", "2,5", "8", "4,83 (6 reseñas)", "Sí", "No lo dice", "Grupo electrógeno, acepta mascotas", "Una reseña dice que la cocina está poco equipada"], "casa-sonada-montana": ["Zona Meliquina, en la montaña", "4", "5", "4", "8", "5,0 (1 reseña)", "Sí", "No lo dice", "Jacuzzi, arroyo y terreno de 1 hectárea", "—"], "la-grande-cuca": ["5 km del centro, camino de ripio", "4", "5", "2", "8", "5,0 (3 reseñas)", "Sí", "Sí", "—", "—"], "las-pendientes-chapelco": ["Las Pendientes (Chapelco)", "4", "9", "2,5", "8", "4,73 (37 reseñas)", "Sí", "Sí", "Vista al volcán Lanín, 250 m²", "Fotos de invierno"], "catedral-primera-linea": ["Villa Catedral", "4", "7", "3", "9", "Sin reseñas (anfitrión 4,55 en otras casas)", "Sí", "Sí", "Fogonero", "—"], "casa-de-bosque": ["3 km del centro, en el bosque", "5", "8", "3", "10", "4,63 (8 reseñas)", "Sí", "Sí", "Huerta y senderos en el bosque", "—"], "los-riscos": ["Barrio Los Riscos", "4", "No lo dice", "4", "8", "Sin reseñas (inmobiliaria)", "Sí", "Sí", "Vista a las montañas", "Mismo dueño que Rincón Radales"], "ml-penon-del-lolog": ["Peñón del Lolog, barrio privado a 6 km", "4", "No lo dice", "3", "12", "Sin reseñas (Mercado Libre)", "Sí", "No lo dice", "Pileta climatizada y playroom", "Precio estimado, mínimo 4 noches, fotos de invierno"], "ml-bariloche-pioneros": ["Av. de los Pioneros km 5", "5", "No lo dice", "4", "10", "Sin reseñas (Mercado Libre)", "No lo dice", "No lo dice", "Vista al lago, calefacción central", "Precio estimado, aviso de hace 10 años, fotos de 2014"]};
   const ROWS = ["Barrio", "Dormitorios", "Camas", "Baños", "Huéspedes", "Calificación", "Hogar", "Parrilla", "Extras", "A tener en cuenta"];
   const cityOf = o => { const z = zoneOf(o); return z === "sma" ? "San Martín de los Andes" : z === "brc" ? "Bariloche" : "Patagonia"; };
@@ -316,7 +345,6 @@ textarea{resize:vertical;min-height:60px}
   const flash = t => { const m = $("voteMsg"); m.textContent = t; m.hidden = !t; clearTimeout(msgTimer); if (t) msgTimer = setTimeout(() => { m.hidden = true; }, 5000); };
   function showWho() {
     $("loginBox").hidden = !!me; $("loginBtn").disabled = !clerk; $("whoBox").hidden = !me;
-    document.body.classList.toggle("gate", !me);
     if (me) $("whoName").textContent = clerk.user.firstName || clerk.user.username || (clerk.user.primaryEmailAddress && clerk.user.primaryEmailAddress.emailAddress.split("@")[0]) || "vos";
   }
   async function initAuth() {
@@ -343,7 +371,7 @@ textarea{resize:vertical;min-height:60px}
       const r = await fetch("/api/votes", { cache: "no-store", headers });
       if (!r.ok) throw 0;
       const j = await r.json();
-      isAdmin = !!j.isAdmin; voterCount = j.voters || 0;
+      isAdmin = !!(j.isAdmin || j.reveal); voterCount = j.voters || 0;
       votes = {}; people = {};
       for (const [k, v] of Object.entries(j.votes || {})) { votes[k] = v.picks || []; people[k] = v; }
       render();
@@ -377,7 +405,9 @@ textarea{resize:vertical;min-height:60px}
     const numOf = new Map(fixedOrder.map((o, i) => [o.id, i + 1]));
     const byVotes = [...options].sort((a, b) => (tally[b.id]?.length || 0) - (tally[a.id]?.length || 0) || numOf.get(a.id) - numOf.get(b.id));
     const topCount = byVotes.length ? (tally[byVotes[0].id]?.length || 0) : 0;
-    const leaders = byVotes.filter(o => topCount > 0 && (tally[o.id]?.length || 0) === topCount);
+    const activeByVotes = byVotes.filter(o => !STATUS[o.id]);
+    const topActive = activeByVotes.length ? (tally[activeByVotes[0].id]?.length || 0) : 0;
+    const leaders = activeByVotes.filter(o => topActive > 0 && (tally[o.id]?.length || 0) === topActive);
     const leadId = isAdmin && leaders.length === 1 ? leaders[0].id : null;
 
     // encabezado
@@ -396,7 +426,8 @@ textarea{resize:vertical;min-height:60px}
         const b = document.createElement("b"); b.textContent = n + (n === 1 ? " voto" : " votos");
         const t = document.createElement("span"); t.textContent = " · casa #" + numOf.get(o.id) + " (" + cityOf(o) + ", " + sourceOf(o.url || "").label + ") · ";
         const w = document.createElement("span"); w.className = "muted"; w.textContent = (tally[o.id] || []).map(u => (people[u] && people[u].name) || "?").join(", ");
-        li.append(b, t, w); ol.append(li);
+        if (STATUS[o.id]) { const tg = document.createElement("span"); tg.className = "tag st-" + STATUS[o.id]; tg.textContent = STATUS[o.id] === "out" ? "No disponible" : "Descalificada"; li.append(b, t, w, document.createTextNode(" "), tg); li.className = "faded"; } else li.append(b, t, w);
+        ol.append(li);
       }
       if (!ol.children.length) { const li = document.createElement("li"); li.textContent = "Todavía no votó nadie."; ol.append(li); }
     }
@@ -410,7 +441,7 @@ textarea{resize:vertical;min-height:60px}
       if (x < m.x0 || x > m.x1 || y < m.y0 || y > m.y1) continue;
       const pin = document.createElement("button");
       pin.type = "button";
-      pin.className = "pin" + (o.id === leadId ? " lead" : "") + (myPicks.has(o.id) ? " mine" : "") + (o.approx ? " approx" : "");
+      pin.className = "pin" + (STATUS[o.id] ? " st-" + STATUS[o.id] : "") + (o.id === leadId ? " lead" : "") + (myPicks.has(o.id) ? " mine" : "") + (o.approx ? " approx" : "");
       pin.style.left = ((x - m.x0) / (m.x1 - m.x0) * 100) + "%";
       pin.style.top = ((y - m.y0) / (m.y1 - m.y0) * 100) + "%";
       const s = document.createElement("span"); s.textContent = numOf.get(o.id); pin.append(s);
@@ -422,7 +453,7 @@ textarea{resize:vertical;min-height:60px}
     }
 
     // lista
-    const shown = fixedOrder.filter(o => filter === "todas" || zoneOf(o) === filter);
+    const shown = fixedOrder.filter(o => filter === "todas" || zoneOf(o) === filter).sort((a, b) => rank(a.id) - rank(b.id) || (tally[b.id]?.length || 0) - (tally[a.id]?.length || 0) || numOf.get(a.id) - numOf.get(b.id));
     statusEl.hidden = shown.length > 0;
     if (!options.length) statusEl.textContent = "Todavía no hay opciones. Sumá la primera con el formulario de abajo.";
     else if (!shown.length) statusEl.textContent = "No hay opciones en esta zona.";
@@ -432,7 +463,8 @@ textarea{resize:vertical;min-height:60px}
       const n = tally[o.id]?.length || 0;
       const mine = myPicks.has(o.id);
       const card = document.createElement("article");
-      card.className = "card" + (mine ? " mine" : "");
+      const st = STATUS[o.id] || "";
+      card.className = "card" + (mine ? " mine" : "") + (st ? " st-" + st : "");
       card.id = "card-" + o.id;
 
       // fotos
@@ -474,7 +506,7 @@ textarea{resize:vertical;min-height:60px}
       const badges = document.createElement("div"); badges.className = "badges";
       const num = document.createElement("span"); num.className = "num" + (o.id === leadId ? " lead" : ""); num.textContent = numOf.get(o.id);
       const lb = document.createElement("span");
-      if (o.id === leadId) { lb.className = "badge lead"; lb.textContent = "Va ganando"; } else if (mine) { lb.className = "badge"; lb.textContent = "Tu voto"; }
+      if (st === "out") { lb.className = "badge st-out"; lb.textContent = "No disponible"; } else if (st === "dq") { lb.className = "badge st-dq"; lb.textContent = "Descalificada"; } else if (o.id === leadId) { lb.className = "badge lead"; lb.textContent = "Va ganando"; } else if (mine) { lb.className = "badge"; lb.textContent = "Tu voto"; }
       badges.append(num, lb);
       ph.append(badges);
 
@@ -498,6 +530,9 @@ textarea{resize:vertical;min-height:60px}
       }
       info.append(pr);
       const sp = SPEC[o.id];
+      const vn = (tally[o.id] || []).map(u => (people[u] && people[u].name) || "?");
+      const vline = document.createElement("p"); vline.className = "votedby";
+      if (isAdmin) { const b0 = document.createElement("b"); b0.textContent = vn.length ? (vn.length === 1 ? "1 voto: " : vn.length + " votos: ") : "Sin votos"; vline.append(b0, document.createTextNode(vn.join(", "))); info.append(vline); }
       if (sp) {
         const dl = document.createElement("dl"); dl.className = "spec";
         ROWS.forEach((r, i) => { if (r === "Extras" || r === "A tener en cuenta") return; const dt = document.createElement("dt"); dt.textContent = r; const dd = document.createElement("dd"); dd.textContent = sp[i]; if (/^no lo dice$|^—$/i.test(sp[i])) dd.className = "na"; dl.append(dt, dd); });
@@ -527,6 +562,7 @@ textarea{resize:vertical;min-height:60px}
       b.textContent = mine ? "✓ Mi voto" : "Votar";
       b.setAttribute("aria-label", (mine ? "Sacar mi voto de la casa " : "Votar por la casa ") + numOf.get(o.id));
       b.disabled = busy;
+      if (st) { b.hidden = !mine; b.textContent = "Sacar mi voto"; }
       b.onclick = () => togglePick(o.id);
       vote.append(vs, cnt, b);
       foot.append(links, vote);
@@ -541,6 +577,7 @@ textarea{resize:vertical;min-height:60px}
     if (busy) return;
     const cur = new Set(votes[me] || []);
     if (cur.has(oid)) cur.delete(oid);
+    else if (STATUS[oid]) { flash("Esa casa ya no está en carrera."); return; }
     else if (cur.size >= MAXV) { flash("Ya usaste tus " + MAXV + " votos. Sacá uno para votar otra casa."); return; }
     else cur.add(oid);
     busy = true; render();
